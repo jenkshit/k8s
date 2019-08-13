@@ -1,0 +1,47 @@
+#!/bin/bash
+hjsaghef;iajdfhjs;jgslkasfjsgsflkdk
+apt-get update
+apt-get install --download-only -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+EOF
+
+apt-get update
+
+#apt-get install --download-only -y docker.io
+
+
+
+ #Install kubernetes components!
+#apt-get install --download-only -y \
+        #kubelet \
+        #kubeadm \
+        #kubernetes-cni\
+
+#HERE NEED TO LOCALY INSTALL PACKAGES THEN REMOVE COMMENTS TO PROCEED
+#cd /var/cache/apt/archives
+#sudo dpkg -i *.deb
+
+#sudo systemctl enable docker.service
+
+#systemctl stop docker
+#modprobe overlay
+#echo '{"storage-driver": "overlay2"}' > /etc/docker/daemon.json
+#rm -rf /var/lib/docker/*
+#systemctl start docker
+
+#sudo swapoff -a
+#sudo hostnamectl set-hostname master-node
+
+#sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+#mkdir -p $HOME/.kube
+
+#sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+#sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+#sudo kubectl apply -f (PATH_TO_FILE\kube-flannel.yml)
