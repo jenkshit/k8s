@@ -1,0 +1,89 @@
+#!/bin/bash
+#apt-get update
+#apt-get install --download-only -y apt-transport-https
+#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+#deb http://apt.kubernetes.io/ kubernetes-xenial main
+#deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+#EOF
+ 
+ 
+ 
+#cat > /etc/sysctl.d/kubernetes.conf << EOF
+#> net.ipv4.ip_forward = 1
+#> net.bridge.bridge-nf-call-ip6tables = 1
+#> net.bridge.bridge-nf-call-iptables = 1
+#> EOF
+ 
+ 
+#apt-get update
+ 
+#apt-get install -y docker.io
+ 
+#docker pull k8s.gcr.io/kube-apiserver:v1.14.1
+#docker pull k8s.gcr.io/kube-controller-manager:v1.14.1
+#docker pull k8s.gcr.io/kube-scheduler:v1.14.1
+#docker pull k8s.gcr.io/kube-proxy:v1.14.1
+#docker pull k8s.gcr.io/pause:3.1
+#docker pull k8s.gcr.io/etcd:3.3.10
+#docker pull k8s.gcr.io/coredns:1.3.1
+ 
+ 
+ 
+#docker save k8s.gcr.io/kube-apiserver:v1.14.1 > ~/git/k8s/kube-apiserver.tar
+#docker save k8s.gcr.io/kube-controller-manager:v1.14.1 > ~/git/k8s/kube-controller-manager.tar
+#docker save k8s.gcr.io/kube-scheduler:v1.14.1 > ~/git/k8s/kube-scheduler.tar
+#docker save k8s.gcr.io/kube-proxy:v1.14.1 > ~/git/k8s/kube-proxy.tar
+#docker save k8s.gcr.io/pause:3.1 > ~/git/k8s/pause.tar
+#docker save k8s.gcr.io/etcd:3.3.10 > ~/git/k8s/etcd.tar
+#docker save k8s.gcr.io/coredns:1.3.1 > ~/git/k8s/coredns.tar
+ 
+ 
+sudo systemctl enable docker.service
+sudo swapoff -a
+systemctl stop docker
+modprobe overlay
+echo '{"storage-driver": "overlay2"}' > /etc/docker/daemon.json
+rm -rf /var/lib/docker/*
+systemctl start docker
+ 
+docker load < ~/git/k8s/coredns.tar
+docker load < ~/git/k8s/kube-proxy.tar
+docker load < ~/git/k8s/etcd.tar
+docker load < ~/git/k8s/kube-scheduler.tar
+docker load < ~/git/k8s/kube-apiserver.tar
+docker load < ~/git/k8s/pause.tar
+docker load < ~/git/k8s/kube-controller-manager.tar
+ 
+ 
+#Install kubernetes components!
+#apt-get install --download-only -y \
+# kubelet \
+# kubeadm \
+#kubernetes-cni\
+ 
+#HERE NEED TO LOCALY INSTALL PACKAGES THEN REMOVE COMMENTS TO PROCEED
+cd /var/cache/apt/archives
+sudo dpkg -i *.deb
+ 
+#sudo systemctl enable docker.service
+#sudo swapoff -a
+#systemctl stop docker
+#modprobe overlay
+#echo '{"storage-driver": "overlay2"}' > /etc/docker/daemon.json
+#rm -rf /var/lib/docker/*
+#systemctl start docker
+ 
+sudo hostnamectl set-hostname master-node
+sudo swapoff -a
+#sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --pod-network-cidr=10.0.0.13/24
+ 
+#mkdir -p $HOME/.kube
+ 
+#sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+ 
+#sudo chown $(id -u):$(id -g) $HOME/.kube/config
+ 
+#sudo kubectl apply -f (PATH_TO_FILE\kube-flannel.yml)
